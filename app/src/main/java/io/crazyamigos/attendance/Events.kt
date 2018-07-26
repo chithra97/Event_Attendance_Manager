@@ -3,8 +3,12 @@ package io.crazyamigos.attendance
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 
 import kotlinx.android.synthetic.main.activity_events.*
+import org.jetbrains.anko.intentFor
 
 class Events : AppCompatActivity() {
 
@@ -19,4 +23,25 @@ class Events : AppCompatActivity() {
         }
     }
 
-}
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        MenuInflater(this).inflate(R.menu.menu,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item!!.itemId){
+            R.id.logout ->{
+                val pref=getSharedPreferences("event",0)
+                val editor=pref.edit()
+                editor.putString("access_token","")
+                editor.apply()
+                startActivity(intentFor<Login>())
+                finish()
+            }
+            R.id.about ->{}
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    }
+

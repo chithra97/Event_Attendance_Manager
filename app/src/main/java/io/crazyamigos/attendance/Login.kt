@@ -1,5 +1,6 @@
 package io.crazyamigos.attendance
 
+import android.app.AlertDialog
 import android.app.DownloadManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -20,6 +21,13 @@ class Login : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        val pref =getSharedPreferences("event",0)
+        val token=pref.getString("access_token","")
+        if (token!=""){
+            startActivity(intentFor<Events>())
+            finish()
+
+        }
     }
 
     fun doLogin(view: View) {
@@ -52,18 +60,27 @@ class Login : AppCompatActivity() {
                     200 -> {
                         if (response.body() != null) {
                             val jsonResponse = JSONObject(response.body()!!.string())
-                            val accesToken = jsonResponse.getString("acces_token")
-                            Log.d("ACCESS",accesToken)
+                            val accessToken = jsonResponse.getString("access_token")
+                            Log.d("ACCESS",accessToken)
                             val pref=getSharedPreferences("event",0)
                             val editor=pref.edit()
-                            editor.putStringSet("access_token",accesToken)
+                            editor.putString("access_token",accessToken)
                             editor.apply()
-                            startActivity(intentFor<Events>)
+                            startActivity(intentFor<Events>())
+                            finish()
 
                         }
                     }
                         400 ->{
 
+                            AlertDialog.Builder(this@Login)
+                                    .setTitle("error")
+                                    .setMessage("an error occured")
+                                    .setNeutralButton("ok") { dialog, which ->
+                                        dialog.dismiss()
+
+                                    }
+                                    .show()
                         }
                         404 ->{
 
